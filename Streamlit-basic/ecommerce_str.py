@@ -21,7 +21,8 @@ st.markdown("""From the analysis, it is evident that the store is receiving many
             after viewing out product.             
             Select heatmap option to compare progression along product categories or sankey diagram to analyze
             individual category"""
-)
+            )
+
 chart = st.sidebar.selectbox("Select chart type", ("Heatmap", "Sankey"))
 
 
