@@ -3,8 +3,8 @@
 from datetime import datetime
 from pandas import read_csv
 import streamlit as st
-#from streamlit_option_menu import option_menu
 from datetime import datetime
+from streamlit_option_menu import option_menu
 
 #Read Data
 df = read_csv(r'E:\66DaysofData\Pareto_Analysis\Pareto Input.csv')
