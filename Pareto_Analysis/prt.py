@@ -14,6 +14,7 @@ df = read_csv(r'E:\66DaysofData\Pareto_Analysis\Pareto Input.csv')
 # Process Data
 #Aggregate the data to the total sales for each customer
 df = df.groupby(['Customer ID', 'First Name', 'Surname']).Sales.sum().reset_index()
+df.Sales = df.Sales.round(2)
 #Calculate the percent of total sales each customer represents
 df['% of Total'] = df['Sales']*100/df['Sales'].sum()
 #Order by the percent of total in a descending order
@@ -23,24 +24,36 @@ df = df.sort_values(by=['% of Total'], ascending= False)
 df['Running % of Total'] = df['% of Total'].cumsum().round(2)
 
 # Create column with total no. unique customers
-df['Total Customers'] = len(df)
 #-----------------------------------------------------------------------------------
 
 
 #APP
-#title
-st.title("PARETO ANALYSIS")
+
 #Date
 date = datetime.now().date()
 
 #Sidebar
 st.sidebar.image('''E:\66DaysofData\Pareto_Analysis\the-sum-of.png''', use_column_width= True)
                                                       
-st.sidebar.markdown( "<h1 style='text-align: center; color: red;\
+st.sidebar.markdown( "<h1 style='text-align: center; color: orange;\
                     '>Sigma Holdings LLC</h1>", unsafe_allow_html=True)
 st.sidebar.markdown( "<h4 style='text-align: center; color: black;\
                     '> Author: Diana Kung'u</h4>", unsafe_allow_html=True)
 #st.sidebar.write(date)
+
+
+with st.sidebar:
+    choose = option_menu("MENU", ["About", "Pareto Analysis", "RFM Analysis", "Contact", "Settings"],
+                         icons=['house', 'activity', 'kanban', 'book', 'gear'],
+                         menu_icon="app-indicator", default_index=0,
+                         styles={
+        "container": {"padding": "5!important", "background-color": "#ffffff"},
+        "icon": {"color": "orange", "font-size": "25px"}, 
+        "nav-link": {"font-size": "16px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
+        "nav-link-selected": {"background-color": "#02ab21"},
+    }
+    )
+    
 st.sidebar.markdown(
     """<a style='display: block; text-align: center;' 
         href ="https://preppindata.blogspot.com/2022/03/2022-week-13-pareto-parameters.html"\
@@ -49,20 +62,29 @@ st.sidebar.markdown(
     unsafe_allow_html=True,
 )
 
-with st.sidebar:
-    choose = option_menu("App Gallery", ["About", "Photo Editing", "Project Planning", "Python e-Course", "Contact"],
-                         icons=['house', 'camera fill', 'kanban', 'book','person lines fill'],
-                         menu_icon="app-indicator", default_index=0,
-                         styles={
-        "container": {"padding": "5!important", "background-color": "#fafafa"},
-        "icon": {"color": "orange", "font-size": "25px"}, 
-        "nav-link": {"font-size": "16px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
-        "nav-link-selected": {"background-color": "#02ab21"},
-    }
+#Pareto body
+
+st.markdown(
+    """<h1 style='display: block; text-align: left;'> Summary
+        
+    """,
+    unsafe_allow_html=True
     )
 
+about_txt = st.markdown('''
+                        
+                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut a velit ullamcorper, 
+                         sollicitudin turpis in, pulvinar dolor. Ut ac bibendum sapien. Maecenas placerat volutpat
+                         quam. Cras dictum diam sed turpis ultricies, vel interdum odio cursus. Donec malesuada ac
+                         tortor ut condimentum. Maecenas nec aliquam leo, eget tristique ante. Ut faucibus mattis 
+                         odio id pretium. Maecenas finibus at ante vel hendrerit. Curabitur id molestie arcu, non
+                         cursus lacus.
 
-#Pareto body
+                        ''')
+
+#title
+st.title("PARETO ANALYSIS")
+
 #Input box
 col, buff1, buff2 = st.columns([2,2,2])
 percent = col.number_input('Enter a percent', min_value= 1, max_value=99, step= None)
@@ -81,10 +103,18 @@ if st.button('Run'):
     st.write(result[0])
     st.write('')
     st.write('')
-    st.write('The customers are')
     
+    #Display DataFrame
+    st.markdown("<h4 style='display: block; text-align: left;'> Customer Details",
+                unsafe_allow_html=True)
     
-    st.dataframe(result[1].style.hide_index(), width=1000, height= 400)
+    df_res =result[1]
+    df_res['Customer Name'] = df_res['First Name'] + " " + df_res['Surname']
+    df_res = result[1].drop(['Running % of Total', 'First Name', 'Surname' ], axis=1)
+    
+    df_res = df_res[['Customer ID','Customer Name', 'Sales', '% of Total']]
+    st.dataframe(df_res.style.format(subset= ['Sales', '% of Total'], formatter="{:.2f}"), width=1200, height= 400)
+    #st.write(df_res[['Sales', '% of Total']].style.format("{:.2}"))
     
     #Download button
     def convert_df(df):
@@ -99,4 +129,4 @@ if st.button('Run'):
     "file.csv",
     "text/csv",
     key='download-csv'
-        )
+    )
