@@ -1,4 +1,8 @@
+'''PARETO Analysis Web App
+Streamlit web that analyzes customers and return top/ main customers.
 
+Author Diana Kung'u
+'''
 # Load Libraries
 from datetime import datetime
 from pandas import read_csv
